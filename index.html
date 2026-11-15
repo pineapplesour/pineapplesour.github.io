@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hyeongbin Park — AI Systems Builder</title>
+<style>
+  :root {
+
+    --cream: #f6efe4;
+    --cream-2: #f1e7d6;
+    --peach: #ffd9c2;
+    --peach-soft: #ffe7d6;
+    --peach-deep: #ffc4a3;
+    --butter: #ffe7b3;
+    --rose: #ffc7cf;
+    --rose-soft: #ffeef0;
+    --rose-deep: #f4949f;
+    --lilac: #d8cdf6;
+    --lilac-soft: #f1ecfc;
+    --lilac-deep: #a48ce0;
+    --sky: #c6e6f2;
+    --sky-soft: #e8f5fb;
+    --sky-deep: #79c4dd;
+    --ink: #4a3f39;
+    --ink-soft: #7c6f66;
+
+    --verd: #3fbfa3;
+    --verd-deep: #2a9d86;
+    --verd-soft: #aee7da;
+
+
+    --d1: rgba(160,130,100,.25);
+    --d2: rgba(120,90,60,.15);
+    --hl: rgba(255,255,255,.90);
+    --r-xl: 42px;
+    --r-lg: 30px;
+    --r-md: 22px;
+    --r-sm: 16px;
+    --shadow-clay: 12px 16px 36px var(--d1), -8px -8px 24px var(--hl), inset 4px 5px 10px var(--hl), inset -6px -7px 14px var(--d2);
+    --shadow-clay-sm: 6px 8px 18px var(--d1), -5px -5px 14px var(--hl), inset 2px 3px 6px var(--hl), inset -3px -4px 9px var(--d2);
+    --shadow-pop: 0 18px 40px rgba(150,110,80,.32);
+    --easing: cubic-bezier(.34,1.56,.64,1);
+    font-synthesis: none;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; overflow-x: hidden; width: 100%; }
+
+  body {
+
+    font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1100px 700px at 12% -8%, var(--butter) 0%, transparent 55%),
+      radial-gradient(1000px 760px at 92% 4%, var(--peach) 0%, transparent 52%),
+      radial-gradient(900px 800px at 50% 118%, var(--lilac) 0%, transparent 60%),
+      linear-gradient(160deg, var(--cream) 0%, var(--cream-2) 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3, .bal {
+    font-weight: 800;
+    letter-spacing: -.02em;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1180px, 92vw); margin-inline: auto; }
+  .accent { color: var(--verd-deep); }
+
+
+  .bg-blobs { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .bg-blobs i {
+    position: absolute; border-radius: 50%;
+    filter: blur(8px);
+    opacity: .55;
+    animation: drift 16s ease-in-out infinite;
+  }
+  .bg-blobs i:nth-child(1) { width: 180px; height: 180px; left: 6%; top: 24%; background: radial-gradient(circle at 32% 30%, #fff8, var(--rose)); animation-delay: -2s; }
+  .bg-blobs i:nth-child(2) { width: 120px; height: 120px; right: 9%; top: 54%; background: radial-gradient(circle at 32% 30%, #fff8, var(--sky)); animation-delay: -6s; }
+  .bg-blobs i:nth-child(3) { width: 90px; height: 90px; left: 16%; bottom: 10%; background: radial-gradient(circle at 32% 30%, #fff8, var(--verd-soft)); animation-delay: -9s; }
+  .bg-blobs i:nth-child(4) { width: 140px; height: 140px; right: 22%; top: 12%; background: radial-gradient(circle at 32% 30%, #fff8, var(--butter)); animation-delay: -4s; }
+  @keyframes drift { 0%, 100% { transform: translate(0,0) } 33% { transform: translate(22px,-26px) } 66% { transform: translate(-18px,16px) } }
+
+
+  header.nav { position: sticky; top: 14px; z-index: 50; }
+  .nav-inner {
+    display: flex; align-items: center; gap: 18px;
+    padding: 12px 14px 12px 18px;
+    background: linear-gradient(150deg, #fffdf9, #f4ead9);
+    border-radius: 30px;
+    box-shadow: var(--shadow-clay-sm);
+    border: 2px solid #fff7;
+  }
+  .logo { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 1.18rem; }
+  .logo .pill {
+    width: 34px; height: 34px; border-radius: 13px;
+    background: linear-gradient(150deg, var(--verd), var(--verd-deep));
+    box-shadow: 3px 4px 8px rgba(42,157,134,.5), inset 2px 2px 4px #fff8, inset -2px -3px 6px rgba(0,60,50,.4);
+    display: grid; place-items: center; position: relative;
+    animation: bob 4s ease-in-out infinite;
+  }
+  .logo .pill::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #fffc; top: 7px; left: 7px; filter: blur(.4px); }
+  @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-3deg) } 50% { transform: translateY(-4px) rotate(3deg) } }
+  .nav-links { display: flex; gap: 6px; margin-left: auto; }
+  .nav-links a {
+    font-weight: 700; font-size: .92rem; color: var(--ink-soft);
+    padding: 9px 15px; border-radius: 16px; transition: .25s var(--easing);
+  }
+  .nav-links a:hover { color: var(--ink); background: #fff8; transform: translateY(-2px); box-shadow: var(--shadow-clay-sm); }
+  .nav-cta {
+    font-weight: 800; font-size: clamp(0.75rem, 3vw, 0.92rem); color: #fff !important;
+    padding: clamp(8px, 2vw, 11px) clamp(12px, 4vw, 20px) !important; border-radius: 16px;
+    white-space: nowrap;
+    background: linear-gradient(150deg, var(--verd), var(--verd-deep));
+    box-shadow: 4px 6px 14px rgba(42,157,134,.45), inset 2px 2px 4px #fff7, inset -2px -3px 6px rgba(0,60,50,.35);
+    transition: .25s var(--easing);
+  }
+  .nav-cta:hover { transform: translateY(-3px) scale(1.03); box-shadow: 6px 10px 20px rgba(42,157,134,.55), inset 2px 2px 4px #fff7, inset -2px -3px 6px rgba(0,60,50,.35); background: linear-gradient(150deg, var(--verd), var(--verd-deep)) !important; }
+  .nav-burger { display: none; }
+
+
+  .hero { position: relative; padding: 46px 0 30px; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-weight: 800; font-size: .82rem; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--verd-deep);
+    background: linear-gradient(150deg, #fff, #eafaf5);
+    padding: 9px 16px; border-radius: 20px;
+    box-shadow: var(--shadow-clay-sm);
+    border: 2px solid #fff;
+  }
+  .eyebrow .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--verd); box-shadow: 0 0 0 4px var(--verd-soft); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 4px var(--verd-soft) } 50% { box-shadow: 0 0 0 7px transparent } }
+
+  h1.title {
+    font-size: clamp(2.3rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.05; margin: 20px 0 0;
+    color: var(--ink);
+  }
+  h1.title .squish { display: inline-block; color: var(--verd-deep); position: relative; animation: squish 5s ease-in-out infinite; transform-origin: bottom center; }
+  @keyframes squish { 0%, 100% { transform: scale(1,1) } 45% { transform: scale(1.06,.93) } 55% { transform: scale(.97,1.04) } }
+
+  .korean-sub {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem); font-weight: 700; margin-top: 15px; color: var(--ink-soft);
+    letter-spacing: -0.02em; line-height: 1.3;
+  }
+  .lede { font-size: 1.08rem; color: var(--ink-soft); margin: 18px 0 0; max-width: 44ch; font-weight: 600; line-height: 1.5; }
+  .hero-cta { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+
+  .btn {
+    font-weight: 700; font-size: 0.95rem; cursor: pointer; border: none;
+    padding: 14px 24px; border-radius: 22px; transition: .3s var(--easing); display: inline-flex; align-items: center; gap: 10px;
+  }
+  .btn-primary {
+    color: #fff; background: linear-gradient(150deg, var(--verd), var(--verd-deep));
+    box-shadow: 6px 9px 20px rgba(42,157,134,.42), inset 2px 2px 5px #fff7, inset -3px -4px 8px rgba(0,60,50,.4);
+  }
+  .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 8px 14px 26px rgba(42,157,134,.55), inset 2px 2px 5px #fff7, inset -3px -4px 8px rgba(0,60,50,.4); }
+  .btn-ghost {
+    color: var(--ink); background: linear-gradient(150deg, #fffdf9, #efe3d2);
+    box-shadow: var(--shadow-clay-sm);
+  }
+  .btn-ghost:hover { transform: translateY(-4px); box-shadow: var(--shadow-pop); }
+
+  .stat-row { display: flex; gap: 26px; margin-top: 34px; flex-wrap: wrap; }
+  .stat b { font-size: 1.8rem; color: var(--verd-deep); display: block; line-height: 1; }
+  .stat span { font-size: .82rem; color: var(--ink-soft); font-weight: 700; }
+
+
+  .scene { position: relative; height: 440px; perspective: 1000px; display: flex; justify-content: center; align-items: center; }
+  .blob-stage { position: absolute; inset: 0; display: grid; place-items: center; }
+  .clay-blob-wrapper {
+    width: 320px; height: 320px; position: relative; transform-style: preserve-3d;
+    animation: floaty 7s ease-in-out infinite;
+  }
+  .clay-blob {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    will-change: transform;
+  }
+  @keyframes floaty { 0%, 100% { transform: translateY(0) rotate(-2deg) } 50% { transform: translateY(-14px) rotate(2deg) } }
+
+
+  .clay-blob .core {
+    position: absolute; width: 150px; height: 150px; border-radius: 50%;
+    top: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    transition: transform 0.3s var(--easing), opacity 0.3s var(--easing);
+    backface-visibility: hidden;
+    outline: 1px solid transparent;
+  }
+
+  .blob-a {
+    left: 10px;
+    background: radial-gradient(circle at 35% 28%, #fff 0%, var(--rose-soft) 22%, var(--rose) 60%, var(--rose-deep) 100%);
+    box-shadow: 10px 14px 26px rgba(220,120,140,.3), inset 6px 8px 12px #fff9, inset -10px -12px 20px rgba(170,70,90,.3);
+    border: 2px solid #fff6;
+  }
+
+  .blob-b {
+    right: 10px;
+    background: radial-gradient(circle at 35% 28%, #fff 0%, var(--sky-soft) 22%, var(--sky) 60%, var(--sky-deep) 100%);
+    box-shadow: 10px 14px 26px rgba(90,160,190,.3), inset 6px 8px 12px #fff9, inset -10px -12px 20px rgba(40,110,140,.3);
+    border: 2px solid #fff6;
+  }
+
+  .blob-intersection {
+    left: 85px;
+    width: 150px !important;
+    height: 150px !important;
+    background: radial-gradient(circle at 35% 28%, #fff 0%, var(--verd-soft) 22%, var(--verd) 60%, var(--verd-deep) 100%);
+    box-shadow: 12px 16px 30px rgba(42,157,134,.35), inset 8px 10px 15px #fffb, inset -12px -14px 22px rgba(0,70,58,.45);
+    border: 2px solid #fff8;
+    z-index: 5;
+    opacity: 0.3;
+    transform: scale(0.4) translateZ(20px);
+  }
+
+  .blob-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-top: 6px;
+    text-shadow: 0 1px 2px #fff8;
+  }
+
+  .main-label {
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 0.78rem;
+    margin-top: 4px;
+  }
+
+  .artichoke-icon {
+    width: 48px;
+    height: 48px;
+    filter: drop-shadow(2px 3px 3px rgba(0,60,50,.25));
+  }
+
+  .clay-blob .gloss {
+    position: absolute; width: 44px; height: 30px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #fffe, #fff0);
+    top: 98px; left: 108px; filter: blur(1px); pointer-events: none; z-index: 10;
+  }
+
+
+  .orbit { position: absolute; inset: -25px; animation: spin 24s linear infinite; transform-style: preserve-3d; pointer-events: none; }
+  .orbit.rev { animation: spin 32s linear infinite reverse; inset: -55px; }
+
+  .chip {
+    position: absolute; width: 78px; height: 40px; border-radius: 14px; display: grid; place-items: center;
+    font-weight: 800; font-size: .68rem; text-align: center; color: var(--ink);
+    box-shadow: var(--shadow-clay-sm); border: 2px solid #fff8; pointer-events: auto;
+    transition: transform .2s var(--easing);
+  }
+
+  .orbit .chip { animation: spin 24s linear infinite reverse; }
+  .orbit.rev .chip { animation: spin 32s linear infinite; }
+  .chip:hover { transform: scale(1.1) translateY(-2px); box-shadow: var(--shadow-pop); }
+
+
+  .orbit .chip:nth-child(1) { top: -6px; left: 50%; transform: translateX(-50%); background: linear-gradient(150deg,#fff,var(--rose)); }
+  .orbit .chip:nth-child(2) { bottom: 15px; right: -10px; background: linear-gradient(150deg,#fff,var(--butter)); }
+  .orbit .chip:nth-child(3) { bottom: 15px; left: -10px; background: linear-gradient(150deg,#fff,var(--sky)); }
+
+  .orbit.rev .chip:nth-child(1) { top: 50%; left: -22px; transform: translateY(-50%); background: linear-gradient(150deg,#fff,var(--lilac)); }
+  .orbit.rev .chip:nth-child(2) { top: 50%; right: -22px; transform: translateY(-50%); background: linear-gradient(150deg,#fff,var(--peach)); }
+  .orbit.rev .chip:nth-child(3) { bottom: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(150deg,#fff,var(--verd-soft)); }
+
+  @keyframes spin { from { transform: rotate(0) } to { transform: rotate(360deg) } }
+
+  .overlap-consensus-pill {
+    position: absolute; bottom: 20px; font-weight: 800; font-size: 0.85rem;
+    color: var(--verd-deep); background: linear-gradient(150deg,#fff,#eafaf5);
+    padding: 8px 16px; border-radius: 20px; box-shadow: var(--shadow-clay-sm);
+    border: 2px solid #fff; z-index: 15;
+  }
+
+
+  .marquee { margin: 24px auto 12px; overflow: hidden; -webkit-mask: linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+  .marquee-track { display: flex; gap: 14px; width: max-content; animation: slide 28s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .tag {
+    font-weight: 800; font-size: .92rem; color: var(--ink-soft); white-space: nowrap;
+    padding: 10px 18px; border-radius: 18px;
+    background: linear-gradient(150deg,#fffdf9,#efe3d2); box-shadow: var(--shadow-clay-sm); border: 2px solid #fff8;
+  }
+  .tag .em { color: var(--verd-deep); }
+  @keyframes slide { to { transform: translateX(-50%); } }
+
+
+  .sec { padding: 64px 0 16px; }
+  .sec-head { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 52ch; margin: 0 auto 44px; }
+  .sec-head .kicker { font-weight: 800; color: var(--verd-deep); letter-spacing: .06em; text-transform: uppercase; font-size: .8rem; }
+  .sec-head h2 { font-size: clamp(1.4rem, 6.2vw, 2.6rem); font-weight: 800; margin: 8px 0 12px; letter-spacing: -0.02em; max-width: 100%; line-height: 1.2; }
+  .sec-head p { color: var(--ink-soft); font-weight: 600; font-size: 1.05rem; }
+
+
+  .loop-system-box {
+    margin-top: 30px; padding: 40px; border-radius: var(--r-xl);
+    background: linear-gradient(155deg,#fffdf9,#f1e6d4);
+    box-shadow: var(--shadow-clay); border: 2px solid #fff8;
+  }
+  .loop-flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; position: relative; }
+  .loop-flow-card {
+    background: #fff9; border-radius: var(--r-md); padding: 22px 18px; text-align: center;
+    box-shadow: var(--shadow-clay-sm); border: 2px solid #fff; transition: .3s var(--easing);
+    position: relative; z-index: 2;
+  }
+  .loop-flow-card:hover { transform: translateY(-4px); background: #ffff; }
+  .loop-flow-card .step-num {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    width: 28px; height: 28px; border-radius: 50%; background: var(--verd); color: #fff;
+    font-weight: 800; font-size: 0.8rem; display: grid; place-items: center;
+    box-shadow: 2px 3px 6px rgba(42,157,134,.3), inset 1px 1px 2px #fff;
+  }
+  .loop-flow-card .step-icon { font-size: 2.2rem; margin: 10px 0 10px; display: inline-block; filter: drop-shadow(1px 2px 3px rgba(120,90,60,.2)); }
+  .loop-flow-card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; color: var(--ink); }
+  .loop-flow-card p { font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; line-height: 1.4; }
+
+
+  .loop-flow-grid::before {
+    content: ""; position: absolute; top: 50%; left: 10%; right: 10%; height: 6px;
+    background: linear-gradient(90deg, var(--rose) 0%, var(--lilac) 40%, var(--verd-soft) 70%, var(--verd) 100%);
+    border-radius: 3px; z-index: 1; transform: translateY(-50%); opacity: 0.5;
+  }
+
+
+  .folio { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
+  .folio .card {
+    position: relative; padding: 30px 30px 26px; border-radius: var(--r-xl);
+    background: linear-gradient(155deg,#fffdf9,#f1e6d4);
+    box-shadow: var(--shadow-clay);
+    border: 2px solid #fff8; overflow: hidden;
+    transition: .4s var(--easing);
+  }
+  .folio .card:hover { transform: translateY(-8px) rotate(-.4deg); box-shadow: var(--shadow-pop), inset 3px 4px 8px var(--hl); }
+  .folio .card.feat { grid-column: span 2; display: grid; grid-template-columns: 200px 1fr; gap: 30px; align-items: center; }
+
+  .obj {
+    width: 120px; height: 120px; border-radius: 36px; position: relative; flex: none;
+    display: grid; place-items: center; transition: .5s var(--easing);
+    animation: floaty-obj 6s ease-in-out infinite;
+  }
+  @keyframes floaty-obj { 0%, 100% { transform: translateY(0) rotate(0deg) } 50% { transform: translateY(-8px) rotate(3deg) } }
+
+  .card:hover .obj { transform: rotate(6deg) scale(1.05); }
+  .obj .face { font-size: 2.6rem; filter: drop-shadow(2px 3px 3px rgba(120,90,60,.3)); }
+  .obj.feat-obj { width: 170px; height: 170px; border-radius: 50px; }
+  .obj.feat-obj .face { font-size: 3.8rem; }
+
+
+  .o-faith { background: radial-gradient(circle at 34% 28%, #fff, var(--verd-soft) 55%, var(--verd)); box-shadow: 10px 14px 26px rgba(42,157,134,.42), inset 6px 8px 14px #fff9, inset -12px -14px 24px rgba(0,70,58,.45); }
+  .o-ralfi { background: radial-gradient(circle at 34% 28%, #fff, var(--lilac) 60%, var(--lilac-deep)); box-shadow: 10px 14px 26px rgba(140,110,210,.35), inset 6px 8px 14px #fff9, inset -10px -12px 22px rgba(90,60,160,.35); }
+  .o-style { background: radial-gradient(circle at 34% 28%, #fff, var(--rose) 60%, var(--rose-deep)); box-shadow: 10px 14px 26px rgba(220,120,140,.35), inset 6px 8px 14px #fff9, inset -10px -12px 22px rgba(170,70,90,.35); }
+  .o-recon { background: radial-gradient(circle at 34% 28%, #fff, var(--sky) 60%, var(--sky-deep)); box-shadow: 10px 14px 26px rgba(90,160,190,.35), inset 6px 8px 14px #fff9, inset -10px -12px 22px rgba(40,110,140,.35); }
+  .o-buylow { background: radial-gradient(circle at 34% 28%, #fff, var(--butter) 60%, #f5c459); box-shadow: 10px 14px 26px rgba(210,160,60,.35), inset 6px 8px 14px #fff9, inset -10px -12px 22px rgba(160,110,30,.35); }
+
+  .card .meta { flex: 1; }
+  .card .tagline { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--verd-deep); background: #eafaf5; padding: 5px 11px; border-radius: 12px; margin-bottom: 10px; }
+  .card h3 { font-size: 1.5rem; font-weight: 800; color: var(--ink); }
+  .card.feat h3 { font-size: 2.0rem; }
+  .card p { color: var(--ink-soft); font-weight: 600; font-size: .95rem; margin-top: 8px; line-height: 1.45; }
+  .card .chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 14px; }
+  .card .chips span { font-size: .72rem; font-weight: 800; color: var(--ink-soft); background: #fff; padding: 5px 11px; border-radius: 11px; box-shadow: inset 1px 1px 3px var(--d2), inset -1px -1px 3px #fff; }
+  .card .more { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-weight: 700; color: var(--verd-deep); font-size: .95rem; }
+  .card .more .arr { transition: .3s var(--easing); }
+  .card:hover .more .arr { transform: translateX(5px); }
+  .card .feat-row { display: flex; gap: 14px; align-items: center; }
+
+
+  .rigor-box {
+    margin-top: 50px; padding: 48px; border-radius: var(--r-xl);
+    background: linear-gradient(155deg, var(--peach-soft), var(--butter));
+    box-shadow: var(--shadow-clay); border: 2px solid #fff;
+    display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center;
+  }
+  .rigor-copy h3 { font-size: 1.8rem; font-weight: 800; color: var(--ink); margin-bottom: 14px; }
+  .rigor-copy p { font-size: 1.02rem; color: var(--ink-soft); font-weight: 600; line-height: 1.55; margin-bottom: 16px; }
+  .rigor-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .rigor-stat-card {
+    background: #fff8; padding: 20px; border-radius: var(--r-md); border: 2px solid #fff;
+    box-shadow: var(--shadow-clay-sm); text-align: center;
+  }
+  .rigor-stat-card b { font-size: 2.0rem; color: var(--verd-deep); display: block; line-height: 1; margin-bottom: 4px; }
+  .rigor-stat-card span { font-size: 0.8rem; color: var(--ink-soft); font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; }
+
+
+  .bio-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 40px; margin-top: 30px; }
+  .bio-profile-card {
+    background: linear-gradient(155deg, #fffdf9, #f1e6d4);
+    box-shadow: var(--shadow-clay); border: 2px solid #fff8;
+    border-radius: var(--r-xl); padding: 40px 30px; text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .avatar-clay {
+    width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 28%, #fff 0%, var(--verd-soft) 25%, var(--verd) 65%, var(--verd-deep) 100%);
+    box-shadow: 10px 14px 24px rgba(42,157,134,.35), inset 6px 8px 12px #fff9, inset -10px -12px 20px rgba(0,70,58,.45);
+    display: grid; place-items: center; font-size: 4rem; margin-bottom: 24px;
+    position: relative; animation: floaty-obj 5.5s ease-in-out infinite;
+  }
+  .avatar-clay::after { content: ""; position: absolute; width: 38px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 40% 40%, #fffe, #fff0); top: 22px; left: 30px; filter: blur(1px); }
+  .bio-profile-card h3 { font-size: 1.8rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .bio-profile-card .subtitle { font-size: 0.95rem; font-weight: 800; color: var(--verd-deep); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px; }
+  .bio-profile-card p { font-size: 0.95rem; color: var(--ink-soft); font-weight: 600; line-height: 1.5; margin-bottom: 24px; text-align: left; }
+
+  .timeline-card {
+    background: linear-gradient(155deg, #fffdf9, #f1e6d4);
+    box-shadow: var(--shadow-clay); border: 2px solid #fff8;
+    border-radius: var(--r-xl); padding: 40px;
+  }
+  .timeline-card h3 { font-size: 1.6rem; font-weight: 800; color: var(--ink); margin-bottom: 20px; }
+  .timeline-item { display: flex; gap: 20px; margin-bottom: 22px; position: relative; }
+  .timeline-item::before {
+    content: ""; position: absolute; top: 12px; left: 11px; bottom: -28px; width: 4px;
+    background: var(--cream-2); border-radius: 2px;
+  }
+  .timeline-item:last-child::before { display: none; }
+  .timeline-dot {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--verd-soft);
+    border: 3px solid #fff; box-shadow: var(--shadow-clay-sm); display: grid; place-items: center;
+    flex-shrink: 0; position: relative; z-index: 2;
+  }
+  .timeline-dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--verd-deep); }
+  .timeline-content { flex: 1; }
+  .timeline-content .date { font-size: 0.78rem; font-weight: 800; color: var(--verd-deep); text-transform: uppercase; letter-spacing: 0.03em; }
+  .timeline-content h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 2px 0 4px; }
+  .timeline-content p { font-size: 0.9rem; color: var(--ink-soft); font-weight: 600; line-height: 1.4; }
+
+
+  .cta-strip { margin: 74px auto 30px; }
+  .cta-card {
+    position: relative; overflow: hidden; text-align: center; padding: 58px 30px;
+    border-radius: 46px;
+    background: linear-gradient(150deg, var(--verd) 0%, var(--verd-deep) 100%);
+    box-shadow: 16px 22px 50px rgba(42,157,134,.4), inset 6px 8px 18px #fff5, inset -10px -14px 30px rgba(0,60,50,.45);
+    color: #fff;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .cta-card::before, .cta-card::after { content: ""; position: absolute; border-radius: 50%; background: #ffffff22; }
+  .cta-card::before { width: 200px; height: 200px; top: -70px; left: -50px; }
+  .cta-card::after { width: 150px; height: 150px; bottom: -60px; right: -30px; }
+  .cta-card h2 { font-size: clamp(1.4rem, 6vw, 2.4rem); font-weight: 800; position: relative; white-space: nowrap; letter-spacing: -0.02em; max-width: 100%; }
+  .cta-card p { font-weight: 600; opacity: .92; margin: 12px auto 26px; max-width: 44ch; position: relative; font-size: 1.02rem; }
+  .cta-card .btn-primary { background: #fff; color: var(--verd-deep); box-shadow: 6px 9px 20px rgba(0,50,42,.3), inset 2px 2px 5px #fff, inset -3px -4px 8px rgba(150,120,90,.25); position: relative; }
+  .cta-card .btn-primary:hover { background: #fff; transform: translateY(-4px) scale(1.03); }
+
+
+  .contact-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
+  .contact-btn {
+    flex: 1; min-width: 110px; padding: 10px 12px; border-radius: 14px;
+    font-size: 0.8rem; font-weight: 800; text-align: center;
+    background: #fff; border: 2px solid #fff; box-shadow: var(--shadow-clay-sm);
+    transition: .2s var(--easing); display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .contact-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-pop); background: var(--cream-2); }
+  .contact-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+
+  footer { padding: 36px 0 50px; }
+  .foot {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    padding: 24px 28px; border-radius: var(--r-lg);
+    background: linear-gradient(155deg,#fffdf9,#f1e6d4); box-shadow: var(--shadow-clay-sm); border: 2px solid #fff8;
+  }
+  .foot .logo { font-size: 1.05rem; }
+  .foot nav { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  .foot nav a { font-weight: 700; font-size: .88rem; color: var(--ink-soft); padding: 8px 13px; border-radius: 13px; transition: .25s; }
+  .foot nav a:hover { color: var(--ink); background: #fff8; }
+  .foot .copy { width: 100%; font-size: .8rem; color: var(--ink-soft); font-weight: 600; padding-top: 6px; border-top: 2px dashed #d9cbb6; margin-top: 4px; }
+
+
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: .7s var(--easing); }
+  .js .folio .card { opacity: 0; transform: translateY(26px) scale(.97); }
+  .reveal.in, .folio .card.in { opacity: 1; transform: none; }
+
+
+  @media (max-width: 992px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 20px; }
+    .scene { height: 350px; order: -1; }
+    .folio { grid-template-columns: 1fr; }
+    .folio .card.feat { grid-template-columns: 1fr; text-align: center; grid-column: auto; padding: 35px 22px; }
+    .folio .card.feat .obj { margin: 0 auto; }
+    .loop-flow-grid { grid-template-columns: repeat(2, 1fr); gap: 24px 18px; }
+    .loop-flow-grid::before { display: none; }
+    .rigor-box { grid-template-columns: 1fr; gap: 30px; padding: 34px; }
+    .bio-grid { grid-template-columns: 1fr; gap: 30px; }
+    .nav-inner { gap: 10px; padding: 12px 16px; }
+    .nav-links { display: none; }
+    .nav-cta { margin-left: auto; }
+    .nav-burger { display: grid; place-items: center; margin-left: 0; width: 54px; height: 42px; border-radius: 14px; background: #fff8; box-shadow: var(--shadow-clay-sm); border: none; font-size: 1.3rem; cursor: pointer; }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { width: 90vw; }
+    h1.title { font-size: 2.1rem; }
+    .korean-sub { font-size: 1.05rem; }
+    .scene { height: 300px; }
+    .clay-blob-wrapper { width: 260px; height: 260px; }
+    .clay-blob .core { width: 120px; height: 120px; top: 70px; }
+    .blob-intersection { left: 70px; width: 120px !important; height: 120px !important; }
+    .blob-a { left: 5px; }
+    .blob-b { right: 5px; }
+    .chip { width: 66px; height: 34px; font-size: 0.62rem; }
+    .orbit { inset: -15px; }
+    .orbit.rev { inset: -35px; }
+    .stat-row { gap: 18px; }
+    .loop-flow-grid { grid-template-columns: 1fr; }
+    .rigor-stats { grid-template-columns: 1fr; }
+    .avatar-clay { width: 110px; height: 110px; font-size: 3rem; }
+    .avatar-clay::after { width: 30px; height: 20px; top: 16px; left: 24px; }
+    .timeline-card { padding: 30px 20px; }
+    .cta-card { padding: 44px 22px; }
+    .cta-card h2 { white-space: normal; line-height: 1.2; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    .reveal, .folio .card { opacity: 1 !important; transform: none !important; }
+  }
+
+
+  h1.title {
+    font-size: 3.75rem;
+    line-height: 1.08;
+    max-width: 11.8em;
+    text-wrap: balance;
+  }
+  h1.title .squish,
+  h1.title .title-tail {
+    white-space: nowrap;
+  }
+
+  .scene {
+    height: 520px;
+    overflow: visible;
+    justify-content: flex-end;
+    padding-left: 48px;
+  }
+  .hero-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(500px, 1.1fr);
+    gap: 72px;
+  }
+  .hero-copy {
+    position: relative;
+    z-index: 3;
+    max-width: 560px;
+  }
+  .clay-blob-wrapper {
+    --stage-size: clamp(360px, 36vw, 440px);
+    --core-size: clamp(176px, 15.8vw, 206px);
+    width: var(--stage-size);
+    height: var(--stage-size);
+  }
+  .clay-blob .core {
+    width: var(--core-size);
+    height: var(--core-size);
+    top: calc(50% - (var(--core-size) / 2));
+  }
+  .blob-a {
+    left: calc(50% - var(--core-size) - 14px);
+  }
+  .blob-b {
+    right: calc(50% - var(--core-size) - 14px);
+  }
+  .blob-intersection {
+    left: 50%;
+    margin-left: calc(var(--core-size) / -2);
+    width: var(--core-size) !important;
+    height: var(--core-size) !important;
+  }
+  .blob-label {
+    font-size: 0.82rem;
+  }
+  .artichoke-icon {
+    width: calc(var(--core-size) * 0.34);
+    height: calc(var(--core-size) * 0.34);
+  }
+  .orbit {
+    inset: -8px;
+  }
+  .orbit.rev {
+    inset: -24px;
+  }
+  .orbit.rev .chip:nth-child(1) {
+    left: -8px;
+  }
+  .orbit.rev .chip:nth-child(2) {
+    right: -8px;
+  }
+
+  .loop-flow-grid::before {
+    display: none;
+  }
+  .loop-flow-grid {
+    align-items: stretch;
+  }
+  .loop-flow-card {
+    min-height: 100%;
+  }
+
+  .folio .card {
+    display: flex;
+  }
+  .folio .card > .feat-row {
+    align-items: center;
+    width: 100%;
+    min-height: 100%;
+  }
+  .folio .card:not(.feat) .obj {
+    margin-block: auto;
+  }
+  .folio .card:not(.feat) .meta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .rigor-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 44px;
+  }
+  .rigor-stats {
+    width: min(760px, 100%);
+    margin-inline: auto;
+    align-items: stretch;
+  }
+  .rigor-stat-card {
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media (max-width: 992px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    h1.title {
+      font-size: 3.15rem;
+    }
+    .scene {
+      height: 460px;
+      order: -1;
+      padding-left: 0;
+      justify-content: center;
+    }
+    .clay-blob-wrapper {
+      --stage-size: min(88vw, 410px);
+      --core-size: clamp(156px, 38vw, 190px);
+    }
+  }
+  @media (max-width: 640px) {
+    h1.title {
+      font-size: 2.35rem;
+      max-width: 10.5em;
+    }
+    .scene {
+      height: 390px;
+    }
+    .clay-blob-wrapper {
+      --stage-size: min(90vw, 330px);
+      --core-size: clamp(132px, 40vw, 154px);
+    }
+    .chip {
+      width: 70px;
+      height: 36px;
+      font-size: 0.62rem;
+    }
+    .rigor-stat-card {
+      min-height: 126px;
+    }
+  }
+
+</style>
+</head>
+<body>
+  <div class="bg-blobs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<header class="nav">
+    <div class="wrap nav-inner">
+      <a class="logo" href="#top">
+        <span class="pill" aria-hidden="true"></span>Hyeongbin&nbsp;Park
+      </a>
+      <nav class="nav-links">
+        <a href="#philosophy">Philosophy</a>
+        <a href="#systems">Systems</a>
+        <a href="#rigor">Methodology</a>
+        <a href="#bio">About</a>
+      </nav>
+      <a class="nav-cta" href="#bio">Get in Touch</a>
+      <button class="nav-burger" aria-label="menu">☰</button>
+    </div>
+  </header>
+<main id="top">
+<section class="hero wrap">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="dot"></span>Yonsei University · Biomedical Engineering</span>
+          <h1 class="title">
+            I build <span class="squish accent">robust AI loops,</span><br><span class="title-tail">not just AI demos.</span>
+          </h1>
+          <div class="korean-sub">I design robust LLM agent harnesses and overlap-verification systems.</div>
+          <p class="lede">
+            I design Codex-like agent harnesses where models plan, act, and execute tools over long horizons. By aligning multi-evaluator feedback, managing stateful experiment ledgers, and enforcing leakage-resistant splits, I make LLM pipelines structurally reliable.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#philosophy">Explore the Loops <span aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#systems">View Built Systems</a>
+          </div>
+          <div class="stat-row">
+            <div class="stat"><b data-count="92.5" data-suffix="%">0</b><span>Logic Loop Accuracy</span></div>
+            <div class="stat"><b data-count="1887" data-suffix="">0</b><span>Actigraphy Records</span></div>
+            <div class="stat"><b data-count="0" data-suffix="%">0</b><span>Evaluation Leakage</span></div>
+          </div>
+        </div>
+<div class="scene" aria-hidden="true" id="metaphor-scene">
+          <div class="blob-stage">
+            <div class="clay-blob-wrapper">
+              <div class="clay-blob">
+<div class="core blob-a">
+                  <span class="blob-label">Reviewer A</span>
+                </div>
+<div class="core blob-b">
+                  <span class="blob-label">Reviewer B</span>
+                </div>
+<div class="core blob-intersection">
+                  <svg class="artichoke-icon" viewBox="0 0 100 100">
+                    <defs>
+                      <radialGradient id="clay-green" cx="35%" cy="28%" r="60%">
+                        <stop offset="0%" stop-color="#fff" />
+                        <stop offset="25%" stop-color="#aee7da" />
+                        <stop offset="70%" stop-color="#3fbfa3" />
+                        <stop offset="100%" stop-color="#2a9d86" />
+                      </radialGradient>
+                      <radialGradient id="clay-green-light" cx="35%" cy="28%" r="60%">
+                        <stop offset="0%" stop-color="#fff" />
+                        <stop offset="40%" stop-color="#eafaf5" />
+                        <stop offset="100%" stop-color="#aee7da" />
+                      </radialGradient>
+                    </defs>
+                    <path d="M50,15 C45,30 30,45 30,65 C30,75 38,83 50,83 C62,83 70,75 70,65 C70,45 55,30 50,15 Z" fill="url(#clay-green)" />
+                    <path d="M50,30 C43,42 35,53 35,68 C35,76 41,81 50,81 C59,81 65,76 65,68 C65,53 57,42 50,30 Z" fill="url(#clay-green-light)" opacity="0.9"/>
+                  </svg>
+                  <span class="blob-label main-label">Overlap Core</span>
+                </div>
+
+                <div class="gloss"></div>
+<div class="orbit">
+                  <div class="chip">Solver</div>
+                  <div class="chip">Harness</div>
+                  <div class="chip">Ledger</div>
+                </div>
+<div class="orbit rev">
+                  <div class="chip">Composer</div>
+                  <div class="chip">Orchestrator</div>
+                  <div class="chip">Gate</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="overlap-consensus-pill">
+            Overlap Verification: <b class="overlap-score-value">30%</b>
+          </div>
+        </div>
+      </div>
+    </section>
+<section class="wrap marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="tag">Codex-like <span class="em">Agent Harnesses</span></span>
+        <span class="tag">Overlap <span class="em">Verification</span></span>
+        <span class="tag">Long-Horizon <span class="em">Tool Use</span></span>
+        <span class="tag">Independent <span class="em">Reviewers</span></span>
+        <span class="tag">No-Leakage <span class="em">Evaluation</span></span>
+        <span class="tag">Stateful <span class="em">Experiment Ledger</span></span>
+        <span class="tag">Promotion & <span class="em">Blocking Gates</span></span>
+        <span class="tag">Actigraphy <span class="em">Rigor</span></span>
+        <span class="tag">Grounded <span class="em">Retrieval</span></span>
+<span class="tag">Codex-like <span class="em">Agent Harnesses</span></span>
+        <span class="tag">Overlap <span class="em">Verification</span></span>
+        <span class="tag">Long-Horizon <span class="em">Tool Use</span></span>
+        <span class="tag">Independent <span class="em">Reviewers</span></span>
+        <span class="tag">No-Leakage <span class="em">Evaluation</span></span>
+        <span class="tag">Stateful <span class="em">Experiment Ledger</span></span>
+        <span class="tag">Promotion & <span class="em">Blocking Gates</span></span>
+        <span class="tag">Actigraphy <span class="em">Rigor</span></span>
+        <span class="tag">Grounded <span class="em">Retrieval</span></span>
+      </div>
+    </section>
+<section class="sec wrap" id="philosophy">
+      <div class="sec-head reveal">
+        <span class="kicker">Core Philosophy</span>
+        <h2>How We Resolve <span class="accent">Agent Drift</span></h2>
+        <p>
+          Single LLM self-critique leads to hallucination cascades. Reliable long-horizon execution requires structural role-separation and blind reviewer convergence.
+        </p>
+      </div>
+
+      <div class="loop-system-box reveal">
+        <div class="loop-flow-grid">
+          <div class="loop-flow-card">
+            <div class="step-num">1</div>
+            <div class="step-icon">🧠</div>
+            <h3>Task Solver</h3>
+            <p>Generates complex scripts or actions within a strictly sandboxed, metadata-frozen environment.</p>
+          </div>
+
+          <div class="loop-flow-card">
+            <div class="step-num">2</div>
+            <div class="step-icon">👥</div>
+            <h3>Independent Evals</h3>
+            <p>Two separate reviewers (Eval A & B) inspect the output blind, with no access to each other’s reasoning paths.</p>
+          </div>
+
+          <div class="loop-flow-card">
+            <div class="step-num">3</div>
+            <div class="step-icon">🥬</div>
+            <h3>Overlap Extract</h3>
+            <p>The Composer extracts only the overlapping criticisms, ignoring individual model noise and random drift.</p>
+          </div>
+
+          <div class="loop-flow-card">
+            <div class="step-num">4</div>
+            <div class="step-icon">🛡️</div>
+            <h3>Orchestrator Gate</h3>
+            <p>Grades consensus, logs paths in the state ledger, and promotes candidates only if independent agreement is reached.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+<section class="sec wrap" id="systems">
+      <div class="sec-head reveal">
+        <span class="kicker">Product Systems</span>
+        <h2>Harnesses, Evaluators & <span class="accent">Product Suites</span></h2>
+        <p>Product-grade systems demonstrating robust self-correction loops, grounded retrieval, and evaluation discipline.</p>
+      </div>
+
+      <div class="folio">
+<article class="card feat">
+          <div class="obj feat-obj o-faith">
+            <span class="face">🥬</span>
+          </div>
+          <div class="meta">
+            <span class="tagline">Featured · Self-Correction</span>
+            <div class="feat-row"><h3>Mini Artichokes Framework</h3></div>
+            <p>
+              An open-source LLM self-correction loop built around validated overlap between independent diagnoses. By extracting only the overlapping signal of two blind evaluator passes, the framework suppresses drift and spurious edits.
+            </p>
+            <p style="font-size: 0.88rem; color: var(--verd-deep); font-weight: 700;">
+              ⚡ Boosted Korean PSAT linguistic logic pass@1 score from 62.5% to 92.5% in reported best-of-20 configurations.
+            </p>
+            <div class="chips">
+              <span>Overlap-Correction</span><span>Blind Diagnostics</span><span>PSAT Logic Solver</span><span>Paper-Style Writeup</span>
+            </div>
+            <a class="more" href="https://github.com/pineapplesour/mini-artichokes" target="_blank" rel="noreferrer">
+              Explore Repository <span class="arr" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </article>
+<article class="card">
+          <div class="feat-row">
+            <div class="obj o-ralfi"><span class="face">🔄</span></div>
+            <div class="meta">
+              <span class="tagline">Agent Framework</span>
+              <h3>agentloop</h3>
+              <p>
+                An enterprise-level multi-agent workflow harness. Separates execution and scoring boundaries completely. Features a stateful experiment ledger, anti-cheat gates, and automated champion promotion loops.
+              </p>
+              <div class="chips"><span>State Ledger</span><span>Promotion Gates</span><span>Anti-Cheat Harness</span></div>
+            </div>
+          </div>
+        </article>
+<article class="card">
+          <div class="feat-row">
+            <div class="obj o-style"><span class="face">ACT</span></div>
+            <div class="meta">
+              <span class="tagline">Biomedical ML Research</span>
+              <h3>Actigraphy-Based Depression Prediction</h3>
+              <p style="font-size: 0.88rem; color: var(--verd-deep); font-weight: 700; margin-top: 4px; margin-bottom: 6px;">
+                Prof. Jaehong Ki's Lab, Yonsei University Mirae Campus
+              </p>
+              <p>
+                Evaluation workspace for actigraphy-based depression prediction research using 1,887 multi-day participant sensor streams. The work focuses on prediction robustness, participant-level splits, leakage audits, and strict holdout discipline without making medical diagnosis claims.
+              </p>
+              <div class="chips"><span>Participant-Level Split</span><span>Leakage Audit</span><span>Holdout Discipline</span><span>Prediction Robustness</span></div>
+            </div>
+          </div>
+        </article>
+<article class="card">
+          <div class="feat-row">
+            <div class="obj o-recon"><span class="face">🎙️</span></div>
+            <div class="meta">
+              <span class="tagline">Multimodal Assistant</span>
+              <h3>gita</h3>
+              <p>
+                A high-performance assistant system powered by Gemini Live. Coordinates camera feeds, real-time screen scraping, and audio streams into low-latency modal orchestration.
+              </p>
+              <div class="chips"><span>Gemini Live</span><span>Real-Time Screen</span><span>Multimodal QA</span></div>
+            </div>
+          </div>
+        </article>
+<article class="card">
+          <div class="feat-row">
+            <div class="obj o-buylow"><span class="face">🔑</span></div>
+            <div class="meta">
+              <span class="tagline">Retrieval & Support</span>
+              <h3>Evidence & Retrieval Suites</h3>
+              <p>
+                Grounded citation systems built for digital healthcare, legal search, and financial discovery environments. RAG is positioned strictly as a supporting evidence module, feeding citation-backed claim cards and passage viewers to human operators across verified production domains:
+              </p>
+              <div class="domain-links" style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+                <a href="https://psykey.ai.kr/" target="_blank" rel="noreferrer" style="font-size: 0.85rem; font-weight: 800; color: var(--verd-deep); background: #eafaf5; padding: 6px 14px; border-radius: 12px; border: 2px solid #fff; box-shadow: var(--shadow-clay-sm); transition: .25s var(--easing); display: inline-flex; align-items: center; gap: 4px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+                  <span>psykey.ai.kr</span> <span style="font-size: 0.75rem;">↗</span>
+                </a>
+                <a href="https://buylow.kr/" target="_blank" rel="noreferrer" style="font-size: 0.85rem; font-weight: 800; color: var(--verd-deep); background: #eafaf5; padding: 6px 14px; border-radius: 12px; border: 2px solid #fff; box-shadow: var(--shadow-clay-sm); transition: .25s var(--easing); display: inline-flex; align-items: center; gap: 4px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+                  <span>buylow.kr</span> <span style="font-size: 0.75rem;">↗</span>
+                </a>
+                <a href="https://lawkey.ai.kr/" target="_blank" rel="noreferrer" style="font-size: 0.85rem; font-weight: 800; color: var(--verd-deep); background: #eafaf5; padding: 6px 14px; border-radius: 12px; border: 2px solid #fff; box-shadow: var(--shadow-clay-sm); transition: .25s var(--easing); display: inline-flex; align-items: center; gap: 4px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+                  <span>lawkey.ai.kr</span> <span style="font-size: 0.75rem;">↗</span>
+                </a>
+              </div>
+              <div class="chips" style="margin-top: 14px;"><span>Citation RAG</span><span>Passage Viewer</span><span>Claim Validation</span></div>
+              <a class="more" href="#contact">Read Case Studies <span class="arr" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+<section class="sec wrap" id="rigor">
+      <div class="sec-head reveal">
+        <span class="kicker">Rigor Over Inflated Claims</span>
+        <h2>Methodological Integrity</h2>
+        <p>Why we treat evaluations as scientific audits, both in LLM agent loops and biomedical engineering.</p>
+      </div>
+
+      <div class="rigor-box reveal">
+        <div class="rigor-stats">
+          <div class="rigor-stat-card">
+            <b>1,887</b>
+            <span>Actigraphy Datasets Audited</span>
+          </div>
+          <div class="rigor-stat-card">
+            <b>100%</b>
+            <span>Leakage-Free Splits</span>
+          </div>
+          <div class="rigor-stat-card">
+            <b>0%</b>
+            <span>Medical/Diag Claims Made</span>
+          </div>
+          <div class="rigor-stat-card">
+            <b>2×</b>
+            <span>Blind Grading Redundancy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+<section class="sec wrap" id="bio">
+      <div class="sec-head reveal">
+        <span class="kicker">Biography</span>
+        <h2>AI Systems Builder</h2>
+        <p>Combining rigorous medical engineering principles with modern agentic architectures.</p>
+      </div>
+
+      <div class="bio-grid">
+<div class="bio-profile-card reveal">
+          <div class="avatar-clay">👨‍💻</div>
+          <h3>Hyeongbin Park</h3>
+          <div class="subtitle">Seoul, South Korea</div>
+          <p>
+            I am currently studying Biomedical Engineering at Yonsei University. My work focuses on building the infrastructure that lets LLMs plan, reason, and self-correct reliably. I specialize in Codex-like agent harnesses, evaluation loops, and overlap-verification schemes.
+          </p>
+
+          <div class="contact-buttons">
+            <a class="contact-btn" href="https://www.linkedin.com/in/hyeongbin-park-47a885404/" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+              LinkedIn
+            </a>
+            <a class="contact-btn" href="https://x.com/blueberstadium" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Twitter/X
+            </a>
+            <a class="contact-btn" href="https://github.com/pineapplesour" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+<div class="timeline-card reveal">
+          <h3>Professional Experience</h3>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="date">Current Research</div>
+              <h4>Biomedical ML Researcher</h4>
+              <p><b>Prof. Jaehong Ki’s Lab, Yonsei University</b></p>
+              <p>Investigating actigraphy-based prediction robustness, auditing data leakage, managing participant-level holdout distributions, and comparing multi-baseline models using HCHS/SOL Sueño datasets.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="date">Spring 2026</div>
+              <h4>Conference Participant</h4>
+              <p><b>Korean Society of Medical and Biological Engineering</b></p>
+              <p>Participated in technical sessions on bio-signal sensors, clinical ML splits, and digital healthcare validation structures.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<section class="cta-strip wrap" id="contact">
+      <div class="cta-card reveal">
+        <h2>Let's Build Robust AI Systems</h2>
+        <p>Whether you're developing high-security research-grade pipelines or long-horizon code generation agents, let's connect to design evaluations that represent true performance.</p>
+        <a class="btn btn-primary" href="https://www.linkedin.com/in/hyeongbin-park-47a885404/" target="_blank" rel="noreferrer">
+          Connect on LinkedIn <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+<footer class="wrap">
+    <div class="foot">
+      <a class="logo" href="#top">
+        <span class="pill" aria-hidden="true"></span>Hyeongbin&nbsp;Park
+      </a>
+      <nav>
+        <a href="#philosophy">Philosophy</a>
+        <a href="#systems">Systems</a>
+        <a href="#rigor">Methodology</a>
+        <a href="#bio">About</a>
+      </nav>
+      <div class="copy">
+        © 2026 Hyeongbin Park — AI Systems Builder. Inspired by independent convergence & peer-verified systems.
+      </div>
+    </div>
+  </footer>
+
+<script>
+  // Mark JS-capable so entrance animations apply (no-JS fallback keeps content visible)
+  document.documentElement.classList.add('js');
+
+  // Reveal on scroll + cards stagger
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: .12 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  document.querySelectorAll('.folio .card').forEach((c, i) => {
+    c.style.transitionDelay = (i * 90) + 'ms';
+    io.observe(c);
+  });
+
+  // Failsafe: never leave elements hidden if observer is delayed
+  setTimeout(() => {
+    document.querySelectorAll('.reveal, .folio .card').forEach(el => el.classList.add('in'));
+  }, 2500);
+
+  // Count-up stats animation
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const rawCount = el.dataset.count;
+      const hasDecimal = rawCount.includes('.');
+      const end = parseFloat(rawCount);
+      const suf = el.dataset.suffix || '';
+      let t0 = null;
+      const dur = 1200;
+
+      const step = (t) => {
+        if (!t0) t0 = t;
+        const p = Math.min((t - t0) / dur, 1);
+        const curVal = (1 - Math.pow(1 - p, 3)) * end;
+
+        if (hasDecimal) {
+          el.textContent = curVal.toFixed(1) + suf;
+        } else {
+          el.textContent = Math.round(curVal) + suf;
+        }
+        if (p < 1) requestAnimationFrame(step);
+      };
+
+      requestAnimationFrame(step);
+      cio.unobserve(el);
+    });
+  }, { threshold: .5 });
+
+  document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+
+  // Interactive parallax & overlap calculation in Metaphor Scene
+  const scene = document.getElementById('metaphor-scene');
+  const blobA = document.querySelector('.blob-a');
+  const blobB = document.querySelector('.blob-b');
+  const blobInter = document.querySelector('.blob-intersection');
+  const scoreVal = document.querySelector('.overlap-score-value');
+  const clayBlob = document.querySelector('.clay-blob');
+
+  if (scene && blobA && blobB && blobInter && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    scene.addEventListener('pointermove', (ev) => {
+      const r = scene.getBoundingClientRect();
+      const x = (ev.clientX - r.left) / r.width - .5; // -0.5 to 0.5
+      const y = (ev.clientY - r.top) / r.height - .5; // -0.5 to 0.5
+
+      // Calculate cursor distance from scene center
+      const dist = Math.sqrt(x * x + y * y); // 0 to ~0.7
+      const closeness = Math.max(0, 1 - dist * 2); // 1 at center, 0 far away
+
+      // Blobs slide closer together as closeness increases
+      const maxShift = Math.min(84, r.width * 0.14);
+      const shiftA = -maxShift + (closeness * maxShift);
+      const shiftB = maxShift - (closeness * maxShift);
+
+      blobA.style.transform = `translateX(${shiftA}px) translateY(${y * 15}px) translateZ(10px)`;
+      blobB.style.transform = `translateX(${shiftB}px) translateY(${y * 15}px) translateZ(10px)`;
+
+      // Overlap core expands and glows
+      const scale = 0.44 + (closeness * 0.66); // scale 0.44 to 1.1
+      const opacity = 0.3 + (closeness * 0.7); // opacity 0.3 to 1.0
+      blobInter.style.transform = `scale(${scale}) translateZ(20px)`;
+      blobInter.style.opacity = opacity;
+
+      // Live Overlap score matching closeness
+      if (scoreVal) {
+        const pct = Math.round(30 + (closeness * 70));
+        scoreVal.textContent = pct + '%';
+      }
+
+      // Apply slight gentle tilt to the entire assembly
+      if (clayBlob) {
+        clayBlob.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+      }
+    });
+
+    scene.addEventListener('pointerleave', () => {
+      blobA.style.transform = '';
+      blobB.style.transform = '';
+      blobInter.style.transform = '';
+      blobInter.style.opacity = '';
+      if (clayBlob) clayBlob.style.transform = '';
+      if (scoreVal) scoreVal.textContent = '30%';
+    });
+  }
+
+  // Squishy click feedback on clay objects
+  document.querySelectorAll('.obj, .nav .pill, .contact-btn, .timeline-dot, .avatar-clay').forEach(o => {
+    o.addEventListener('pointerdown', () => { o.style.transform = 'scale(.91, 1.03)'; });
+    o.addEventListener('pointerup',   () => { o.style.transform = ''; });
+    o.addEventListener('pointerleave', () => { o.style.transform = ''; });
+  });
+
+  // Mobile burger menu logic
+  const burger = document.querySelector('.nav-burger');
+  const links = document.querySelector('.nav-links');
+  if (burger && links) {
+    burger.addEventListener('click', () => {
+      const open = links.style.display === 'flex';
+      links.style.display = open ? '' : 'flex';
+      if (!open) {
+        links.style.position = 'absolute';
+        links.style.flexDirection = 'column';
+        links.style.top = '64px';
+        links.style.right = '14px';
+        links.style.background = '#fffdf9';
+        links.style.padding = '14px';
+        links.style.borderRadius = '20px';
+        links.style.boxShadow = 'var(--shadow-clay-sm)';
+        links.style.border = '2px solid #fff';
+        links.style.gap = '8px';
+      }
+    });
+
+    document.addEventListener('click', (ev) => {
+      if (links.style.display === 'flex') {
+        const isBurger = burger.contains(ev.target);
+        const isInside = links.contains(ev.target);
+        const isLink = ev.target.tagName === 'A';
+        if ((!isBurger && !isInside) || (isInside && isLink)) {
+          links.style.display = '';
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>
